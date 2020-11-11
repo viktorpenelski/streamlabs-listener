@@ -4,35 +4,49 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.socket.client.IO
 import io.socket.client.Socket
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 data class StreamlabsConfig(val key: String = System.getenv("STREAMLABS_SOCKET_KEY"))
 
-class StreamlabsClient(private val config: StreamlabsConfig) {
+class StreamlabsClient @ExperimentalCoroutinesApi constructor(
+    private val channel: BroadcastChannel<DonationMessage>,
+    private val config: StreamlabsConfig) {
 
-    init {
-        val gson = Gson()
-        val socket = IO.socket("https://sockets.streamlabs.com?token=${config.key}")
+    private val gson = Gson()
+    private val socket: Socket = IO.socket("https://sockets.streamlabs.com?token=${config.key}")
+
+    @ExperimentalCoroutinesApi
+    suspend fun connect(): Unit = coroutineScope {
         socket.on(Socket.EVENT_CONNECT) {
             println("connected, wohooo great success!!")
         }
+
         socket.on("event") {
-            println(it[0])
             val event = gson.fromJson(it[0].toString(), StreamlabsTypedEvent::class.java)
             when (event.type) {
-                "alertPlaying" -> {
+                //TODO - figure out a nicer way to bridge socket.on callbacks with coroutines
+                "donation" -> GlobalScope.launch {
+                    donation(it[0].toString())
                 }
-                "donation" -> {
-                    val streamlabsEvent = gson.fromJson(it[0].toString(), StreamlabsEvent::class.java)
-                    println(gson.fromJson(streamlabsEvent.message[0], DonationMessage::class.java))
-                }
-                else -> (println("event: ${it[0]}"))
+                "follow" -> println(it[0].toString())
+                else -> {}
             }
-
         }
         socket.on(Socket.EVENT_DISCONNECT) {
             println("disconnected : (")
         }
         socket.connect()
+    }
+
+    @ExperimentalCoroutinesApi
+    private suspend fun donation(msg: String) {
+        val streamlabsEvent = gson.fromJson(msg, StreamlabsEvent::class.java)
+        val donationMessage = gson.fromJson(streamlabsEvent.message[0], DonationMessage::class.java)
+        channel.send(donationMessage)
     }
 
 }
@@ -49,7 +63,7 @@ data class StreamlabsEvent(
 )
 
 data class DonationMessage(
-    val amount: Double,
+    val amount: Double, //TODO this should probably not be double, find a better way to test the socket API
     val isTest: Boolean,
     val name: String,
     val currency: String,
@@ -61,6 +75,3 @@ data class DonationMessage(
 )
 
 
-fun main() {
-    val client = StreamlabsClient(StreamlabsConfig())
-}
