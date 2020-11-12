@@ -23,6 +23,29 @@ dependencies {
 }
 
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+}
+
+// https://gist.github.com/orip/4951642
+tasks.withType<AbstractTestTask> {
+    afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
+        if (desc.parent == null) { // will match the outermost suite
+            println("""
+                ---
+                Result: ${result.resultType}
+                  ${result.testCount} tests
+                  ${result.successfulTestCount} successful
+                  ${result.failedTestCount} failures
+                  ${result.skippedTestCount} skipped
+                ---
+            """.trimIndent())
+        }
+    }))
+}
+
+tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
