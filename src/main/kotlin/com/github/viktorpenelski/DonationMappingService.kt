@@ -1,8 +1,11 @@
 package com.github.viktorpenelski
 
+import com.github.viktorpenelski.streamlabs.DonationMessage
+
 fun processDonation(donationMessage: DonationMessage, repo: DonationRepository) {
     val tag = getFirstHastTag(donationMessage.message)
-    repo.save(donationMessage, tag)
+    val donation = donationMessage.toDomain(tag)
+    repo.save(donation)
     println("saving message with tag: $tag")
 }
 

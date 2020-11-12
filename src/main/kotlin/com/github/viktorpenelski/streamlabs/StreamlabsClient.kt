@@ -1,5 +1,6 @@
-package com.github.viktorpenelski
+package com.github.viktorpenelski.streamlabs
 
+import com.github.viktorpenelski.Donation
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.socket.client.IO
@@ -14,7 +15,8 @@ data class StreamlabsConfig(val key: String = System.getenv("STREAMLABS_SOCKET_K
 
 class StreamlabsClient @ExperimentalCoroutinesApi constructor(
     private val channel: BroadcastChannel<DonationMessage>,
-    private val config: StreamlabsConfig) {
+    private val config: StreamlabsConfig
+) {
 
     private val gson = Gson()
     private val socket: Socket = IO.socket("https://sockets.streamlabs.com?token=${config.key}")
@@ -33,7 +35,8 @@ class StreamlabsClient @ExperimentalCoroutinesApi constructor(
                     donation(it[0].toString())
                 }
                 "follow" -> println(it[0].toString())
-                else -> {}
+                else -> {
+                }
             }
         }
         socket.on(Socket.EVENT_DISCONNECT) {
@@ -72,6 +75,19 @@ data class DonationMessage(
     val _id: String,
     val message: String,
     val formatted_amount: String
-)
+) {
+
+    fun toDomain(tag: String?): Donation {
+        return Donation(
+            this._id,
+            this.amount,
+            this.currency,
+            this.from, //TODO check if this is the sender
+            this.message,
+            tag = tag
+        )
+    }
+
+}
 
 

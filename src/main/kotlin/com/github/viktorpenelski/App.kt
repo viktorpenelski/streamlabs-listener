@@ -1,5 +1,10 @@
 package com.github.viktorpenelski
 
+import com.github.viktorpenelski.repo.DonationRepositoryJdbc
+import com.github.viktorpenelski.repo.JdbcConfig
+import com.github.viktorpenelski.streamlabs.DonationMessage
+import com.github.viktorpenelski.streamlabs.StreamlabsClient
+import com.github.viktorpenelski.streamlabs.StreamlabsConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -12,7 +17,7 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
     val channel = BroadcastChannel<DonationMessage>(9999)
     val client = StreamlabsClient(channel, StreamlabsConfig())
-    val donationRepository = DonationRepositoryJdbc()
+    val donationRepository = DonationRepositoryJdbc(JdbcConfig("jdbc:sqlite:sample.db"))
 
     client.connect()
     sendDonationsToMapper(channel.openSubscription(), donationRepository, ::processDonation)
