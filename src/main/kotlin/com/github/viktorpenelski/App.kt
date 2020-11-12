@@ -12,18 +12,21 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
     val channel = BroadcastChannel<DonationMessage>(9999)
     val client = StreamlabsClient(channel, StreamlabsConfig())
+    val donationRepository = DonationRepositoryJdbc()
+
     client.connect()
-    sendDonationsToMapper(channel.openSubscription(), DonationMappingService())
+    sendDonationsToMapper(channel.openSubscription(), donationRepository, ::processDonation)
     logDonations(channel.openSubscription())
 
     println()
 }
 
 suspend fun sendDonationsToMapper(channel: ReceiveChannel<DonationMessage>,
-                                  service: DonationMappingService) = coroutineScope {
+                                  repo: DonationRepository,
+                                  service: (DonationMessage, DonationRepository) -> Unit) = coroutineScope {
     launch {
         channel.consumeEach {
-            service.accept(it)
+            service.invoke(it, repo)
         }
     }
 }

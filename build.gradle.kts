@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "1.4.10"
     kotlin("plugin.serialization") version "1.4.10"
-
 }
 
 group = "com.github.viktorpenelski"
@@ -17,6 +16,8 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
     implementation("io.socket:socket.io-client:1.0.0")
+
+    implementation("org.xerial:sqlite-jdbc:3.32.3.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0")
 }
