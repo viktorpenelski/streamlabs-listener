@@ -2,29 +2,29 @@ package com.github.viktorpenelski.repo
 
 import com.github.viktorpenelski.Donation
 import com.github.viktorpenelski.DonationRepository
-import org.sqlite.SQLiteConfig
 import java.sql.Connection
 import java.sql.DriverManager
+import java.util.*
+
+const val donationsTableName = "DONATIONS"
 
 data class JdbcConfig(
     val connectionString: String = System.getenv("STREAMLABS_JDBC_CONNECTION"),
-    val sqLiteConfig: SQLiteConfig = SQLiteConfig()
+    val props: Properties = Properties()
 ) {
     fun getConnection(): Connection {
-        return DriverManager.getConnection(connectionString, sqLiteConfig.toProperties())
+        return DriverManager.getConnection(connectionString, props)
     }
 }
 
 class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepository {
 
-    private val dbName = "DONATIONS"
-
     override fun getById(id: Long): Donation? {
-        getConnection().use { conn ->
+        config.getConnection().use { conn ->
             conn.prepareStatement(
                 """
                     SELECT _id, amount, currency, sender, message, id, tag
-                    FROM $dbName
+                    FROM $donationsTableName
                     WHERE id = ?
             """.trimIndent()
             ).use { preparedStatement ->
@@ -38,7 +38,8 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
                         rs.getString("sender"),
                         rs.getString("message"),
                         rs.getLong("id"),
-                        rs.getString("tag"))
+                        rs.getString("tag")
+                    )
                 } else {
                     null
                 }
@@ -47,10 +48,10 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
     }
 
     override fun save(donation: Donation) {
-        getConnection().use { conn ->
+        config.getConnection().use { conn ->
             conn.prepareStatement(
                 """
-                INSERT INTO $dbName(_id, amount, currency, sender, message, tag)
+                INSERT INTO $donationsTableName(_id, amount, currency, sender, message, tag)
                     VALUES (?,?,?,?,?,?)
             """.trimIndent()
             ).use { preparedStatement ->
@@ -65,42 +66,5 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
             }
         }
     }
-
-    fun recreateSchema() {
-        getConnection().use { conn ->
-            conn.createStatement().use { statement ->
-                statement.queryTimeout = 30 // set timeout to 30 sec.
-                statement.executeUpdate("drop table if exists $dbName")
-                statement.executeUpdate(
-                    """create table $dbName (
-                    id integer PRIMARY KEY NOT NULL, 
-                    _id string NOT NULL, 
-                    amount float NOT NULL, 
-                    currency string NOT NULL,
-                    sender string NOT NULL, 
-                    message string NOT NULL, 
-                    tag string
-            )
-        """.trimIndent()
-                )
-            }
-        }
-
-    }
-
-    private fun getConnection(): Connection {
-        return DriverManager.getConnection(config.connectionString, config.sqLiteConfig.toProperties())
-    }
 }
 
-fun main() {
-    val donationRepositoryJdbc = DonationRepositoryJdbc(JdbcConfig("jdbc:sqlite:test-tmp.db"))
-    donationRepositoryJdbc.recreateSchema()
-    donationRepositoryJdbc.save(Donation("some ext id",
-        15.5,
-        "BGN",
-        "digggi",
-        "Some big important message"
-    ))
-    println(donationRepositoryJdbc.getById(1))
-}

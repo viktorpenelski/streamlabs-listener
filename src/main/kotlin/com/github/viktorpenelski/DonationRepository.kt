@@ -1,7 +1,5 @@
 package com.github.viktorpenelski
 
-import com.github.viktorpenelski.streamlabs.DonationMessage
-
 interface DonationRepository {
     fun getById(id: Long): Donation?
     fun save(donation: Donation)

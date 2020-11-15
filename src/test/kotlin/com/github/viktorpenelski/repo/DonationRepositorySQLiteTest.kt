@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-internal class DonationRepositoryJdbcTest {
+internal class DonationRepositorySQLiteTest {
 
     // some platforms do not end with trailing slash - https://www.rgagnon.com/javadetails/java-0484.html
     private val tmpDir = System.getProperty("java.io.tmpdir").let {
@@ -16,11 +16,12 @@ internal class DonationRepositoryJdbcTest {
             it + File.separator
         }
     }
-    private val repo = DonationRepositoryJdbc(JdbcConfig("jdbc:sqlite:${tmpDir}test-tmp.db"))
+    private val config = JdbcConfig("jdbc:sqlite:${tmpDir}test-tmp.db")
+    private val repo = DonationRepositoryJdbc(config)
 
     @BeforeEach
     fun setup() {
-        repo.recreateSchema()
+        recreateSchemaSQLite(config)
     }
 
     @Test

@@ -16,10 +16,17 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
     implementation("io.socket:socket.io-client:1.0.0")
+    implementation("org.postgresql:postgresql:42.2.16")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.2.1")
 
     implementation("org.xerial:sqlite-jdbc:3.32.3.2")
 
+    testImplementation("org.slf4j:slf4j-nop:1.7.30")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("org.testcontainers:testcontainers:1.15.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.15.0")
+    testImplementation("org.testcontainers:postgresql:1.15.0")
+
 }
 
 tasks {
