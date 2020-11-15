@@ -1,6 +1,14 @@
+# hidden dirs
 .gradle/
 .idea/
+
+# output dirs
 build/
 out/
 
+# .db files (e.g. SQLite)
 *.db
+
+# docker-compose volumes
+pgadmin-data/
+postgres-data/

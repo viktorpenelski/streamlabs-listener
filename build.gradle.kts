@@ -16,6 +16,8 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
     implementation("io.socket:socket.io-client:1.0.0")
+    implementation("org.postgresql:postgresql:42.2.16")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.2.1")
 
     implementation("org.xerial:sqlite-jdbc:3.32.3.2")
 

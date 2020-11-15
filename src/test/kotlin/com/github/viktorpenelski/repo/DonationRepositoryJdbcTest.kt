@@ -16,11 +16,12 @@ internal class DonationRepositoryJdbcTest {
             it + File.separator
         }
     }
-    private val repo = DonationRepositoryJdbc(JdbcConfig("jdbc:sqlite:${tmpDir}test-tmp.db"))
+    private val config = JdbcConfig("jdbc:sqlite:${tmpDir}test-tmp.db")
+    private val repo = DonationRepositoryJdbc(config)
 
     @BeforeEach
     fun setup() {
-        repo.recreateSchema()
+        recreateSchemaSQLite(config)
     }
 
     @Test
