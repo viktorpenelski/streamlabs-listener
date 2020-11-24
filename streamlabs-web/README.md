@@ -58,3 +58,13 @@ INSTALLED_APPS = [
 
 [Adding `--keepdb`](https://docs.djangoproject.com/en/3.1/ref/django-admin/#cmdoption-test-keepdb) makes the integration tests preserve DB between runs, speeding up the process by quite a lot
 `python manage.py test --keepdb`
+
+## Dist package
+
+[ref](https://packaging.python.org/tutorials/packaging-projects/)
+
+Package:
+`python setup.py sdist`
+
+Install:
+`python -m pip install django-obs/dist/django-obs-0.1.tar.gz`

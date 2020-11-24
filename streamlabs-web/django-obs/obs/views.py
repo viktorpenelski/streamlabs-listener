@@ -11,11 +11,15 @@ def index(request):
     return HttpResponse("Hello, world. You're at the obs web index.")
 
 
+def barchart(request):
+    d = MyBarChartDrawing()
+
+
 def aggregate_hashtags(request):
     hashtags = request.GET.getlist("tag")
     aggregated_tags = [aggregate_for(tag) for tag in hashtags]
     context = {"aggregated_tags": aggregated_tags}
-    return render(request, "obs/templates/obs/aggregate.html", context)
+    return render(request, "obs/aggregate.html", context)
 
 
 def aggregate_for(tag):
