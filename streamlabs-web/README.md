@@ -11,6 +11,9 @@ After that can be used with `pip install -r requirements.txt`
 
 ## DB Migrations
 
+By default, all fields are `NOT NULL`.
+When migrating (e.g. adding new col), a one-off migration can be performed.
+
 `python manage.py makemigrations obs`
 
 Creates the next sequential migration from all models defined int `obs/models.py`
