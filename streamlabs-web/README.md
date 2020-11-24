@@ -25,3 +25,28 @@ Executes the actual migrations.
 Migration info is stored inside table `django_migrations` where the last ran migration
 can be seen. In case the migration has already been applied (e.g. in my case by an external app)
 the `--fake` flag can be provided, pretending to apply all migrations without actually doing so.
+
+
+## Admin
+
+Create an admin user:
+`python manage.py createsuperuser`
+
+Make sure to add the app in admin
+
+`obs.admin.py`:
+```
+from django.contrib import admin
+from .models import Donation
+admin.site.register(Donation)
+```
+
+As well as that it is installed under main apps' `settings.py`
+
+```
+INSTALLED_APPS = [
+    'obs.apps.ObsWebConfig',
+    'django.contrib.admin',
+    ...
+]
+```
