@@ -12,7 +12,11 @@ def index(request):
 
 
 def barchart(request):
+    from .testchart import MyBarChartDrawing
     d = MyBarChartDrawing()
+    # get a GIF (or PNG, JPG, or whatever)
+    binary_stuff = d.asString('png')
+    return HttpResponse(binary_stuff, 'image/png')
 
 
 def aggregate_hashtags(request):
