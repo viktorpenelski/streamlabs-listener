@@ -3,28 +3,6 @@ package com.github.viktorpenelski.repo
 import com.github.viktorpenelski.initializeDotEnv
 import com.github.viktorpenelski.initializeJdbcConfig
 
-
-fun recreateSchemaSQLite(config: JdbcConfig) {
-    config.getConnection().use { conn ->
-        conn.createStatement().use { statement ->
-            statement.queryTimeout = 30 // set timeout to 30 sec.
-            statement.executeUpdate("drop table if exists $donationsTableName")
-            statement.executeUpdate(
-                """create table $donationsTableName (
-                    id integer PRIMARY KEY NOT NULL, 
-                    _id string NOT NULL UNIQUE, 
-                    amount float NOT NULL, 
-                    currency string NOT NULL,
-                    sender string NOT NULL, 
-                    message string NOT NULL, 
-                    tag string
-            )
-        """.trimIndent()
-            )
-        }
-    }
-}
-
 fun recreateSchema(config: JdbcConfig) {
     config.getConnection().use { conn ->
         conn.createStatement().use { statement ->
@@ -38,7 +16,8 @@ fun recreateSchema(config: JdbcConfig) {
                     currency VARCHAR NOT NULL,
                     sender VARCHAR NOT NULL, 
                     message VARCHAR NOT NULL, 
-                    tag VARCHAR
+                    tag VARCHAR,
+                    date_created TIMESTAMP NOT NULL DEFAULT NOW()
             )
         """.trimIndent()
             )
