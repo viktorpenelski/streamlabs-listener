@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'obs.apps.ObsWebConfig',
+    'django-obs.obs.apps.ObsWebConfig',
     'django.contrib.admin',
     'rangefilter',
     'django.contrib.auth',
