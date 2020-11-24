@@ -53,3 +53,8 @@ INSTALLED_APPS = [
     ...
 ]
 ```
+
+## Testing
+
+[Adding `--keepdb`](https://docs.djangoproject.com/en/3.1/ref/django-admin/#cmdoption-test-keepdb) makes the integration tests preserve DB between runs, speeding up the process by quite a lot
+`python manage.py test --keepdb`

@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'obs.apps.ObsWebConfig',
     'django.contrib.admin',
+    'rangefilter',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'streamlabs_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
