@@ -31,8 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'chartjs',
-
     'obs.apps.ObsWebConfig',
 
     'rangefilter',

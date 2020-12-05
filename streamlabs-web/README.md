@@ -1,13 +1,20 @@
 # Streamlabs web
 
 
-## generating `requirements.txt`
+## environment
+
 ensure already in a venv
 (creating a new one with `python3 -m venv /path/to/new/virtual/env` )
 
+activate venv:
+    - Windows `cmd.exe C:\> <venv>\Scripts\activate.bat`
+    - POSIX `source <venv>/bin/activate`
+
+generate requirements.txt:
 `pip freeze > requirements.txt`
 
-After that can be used with `pip install -r requirements.txt`
+install requirements.txt:
+`pip install -r requirements.txt`
 
 ## DB Migrations
 

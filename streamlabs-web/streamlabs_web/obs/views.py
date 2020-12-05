@@ -2,8 +2,6 @@
 import json
 from dataclasses import dataclass
 
-from dataclasses_json import dataclass_json
-from django.core import serializers
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -50,13 +48,11 @@ class AggregatedDonationEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-@dataclass_json
 @dataclass
 class JsonAggregated:
     aggregate_hashtags: list
 
 
-@dataclass_json
 @dataclass
 class AggregatedDonation:
     tag: str
