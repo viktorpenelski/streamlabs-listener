@@ -7,5 +7,6 @@ app_name = 'obs'
 urlpatterns = [
     path('', views.index, name='index'),
     path('aggregate', views.aggregate_hashtags, name='aggregate'),
+    path('api/aggregate', views.api_aggregate_hashtags, name='api_aggregate'),
     path('barchart', views.barchart, name='barchart')
 ]
