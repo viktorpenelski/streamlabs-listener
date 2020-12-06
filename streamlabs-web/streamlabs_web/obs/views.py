@@ -27,11 +27,8 @@ def aggregate_hashtags(request):
     return render(request, "obs/aggregate.html", context)
 
 
-def api_aggregate_hashtags(request):
-    hashtags = request.GET.getlist("tag")
-    aggregated_tags = [aggregate_for(tag) for tag in hashtags]
-    # context = {"aggregated_tags": serializers.serialize("json", aggregated_tags)}
-    return JsonResponse(json.dumps(aggregated_tags, cls=AggregatedDonationEncoder), safe=False)
+def aggregate_chart(request):
+    return render(request, "obs/aggregate_chart.html")
 
 
 def aggregate_for(tag):
