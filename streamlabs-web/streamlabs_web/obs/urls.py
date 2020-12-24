@@ -7,6 +7,7 @@ from . import views, views_api
 app_name = 'obs'
 router = routers.DefaultRouter()
 router.register(r'donations', views_api.DonationViewSet)
+router.register(r'aggregate_slugs', views_api.AggregateSlugViewSet)
 
 urlpatterns = [
     path('', views.index, name='index'),

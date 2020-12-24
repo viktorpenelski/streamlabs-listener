@@ -31,9 +31,16 @@ def aggregate_chart(request):
     return render(request, "obs/aggregate_chart.html")
 
 
-def aggregate_for(tag):
+def aggregate_for(tag, min_date=None, max_date=None):
     tagged_donations = Donation.objects.all().filter(tag=tag)
+    if min_date:
+        tagged_donations = tagged_donations.filter(date_created__gte=min_date)
+        print(f'min date: {min_date}')
+    if max_date:
+        tagged_donations = tagged_donations.filter(date_created__lte=max_date)
+        print(f'max date: {max_date}')
     aggregated = sum(d.amount for d in tagged_donations)
+    print(f'aggregated for tag[{tag}]: {aggregated}')
     return AggregatedDonation(tag, aggregated)
 
 

@@ -1,16 +1,8 @@
+from datetime import datetime, timedelta
+
+from django.utils.timezone import now
+
 from django.db import models
-
-
-# Create your models here.
-# data class Donation(
-#     val _id: String,
-#     val amount: Double,
-#     val currency: String,
-#     val sender: String,
-#     val message: String,
-#     val id: Long? = null,
-#     val tag: String? = null
-# )
 
 
 class Donation(models.Model):
@@ -38,3 +30,17 @@ class Donation(models.Model):
     # table name can be specified within inner class Meta
     class Meta:
         db_table = 'donations'
+
+
+def default_end_time():
+    return now() + timedelta(minutes=30)
+
+
+class AggregateSlug(models.Model):
+    slug = models.CharField(max_length=16, unique=True, primary_key=True, editable=True)
+    tags = models.TextField(editable=True)
+    min_date = models.DateTimeField(default=now)
+    max_date = models.DateTimeField(default=default_end_time)
+
+    class Meta:
+        db_table = 'aggregate_slugs'

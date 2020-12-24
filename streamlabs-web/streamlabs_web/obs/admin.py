@@ -1,7 +1,7 @@
 from django.contrib import admin
 from rangefilter.filter import DateTimeRangeFilter
 
-from .models import Donation
+from .models import Donation, AggregateSlug
 
 
 class DonationAdmin(admin.ModelAdmin):
@@ -11,4 +11,11 @@ class DonationAdmin(admin.ModelAdmin):
     list_filter = ['tag', ('date_created', DateTimeRangeFilter)]
 
 
+class AggregateSlugAdmin(admin.ModelAdmin):
+    fields = ['slug', 'tags', 'min_date', 'max_date']
+    list_display = ['slug', 'tags', 'min_date', 'max_date']
+    search_fields = ['slug', 'tags']
+
+
 admin.site.register(Donation, DonationAdmin)
+admin.site.register(AggregateSlug, AggregateSlugAdmin)

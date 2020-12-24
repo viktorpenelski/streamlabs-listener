@@ -26,7 +26,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    backgroundColor: 'rgb(255,99,132)',
+                    backgroundColor: 'rgb(96,6,59)',
                     borderColor: 'rgb(255, 99, 132)',
                     data: data
                 }]
@@ -89,7 +89,7 @@
     }
 
     function handleAggregationResponse(response) {
-        console.log(response)
+        {#console.log(response)#}
         let labels = []
         let amounts = []
         response.aggregated_tags.forEach((tag) => {
@@ -101,17 +101,42 @@
 
     }
 
-    function fetchData() {
-        fetch(window.location.origin + '/obs/api/aggregate?tag=foo&tag=%23test&tag=%23msg')
+    function fetchData(tags, minDate, maxDate) {
+        let url = new URL(window.location.origin + '/obs/api/aggregate');
+        tags.forEach(tag => url.searchParams.append("tag", tag));
+        url.searchParams.append("min_date", minDate);
+        url.searchParams.append("max_date", maxDate);
+        console.log(url.toString());
+        fetch(url.toString())
             .then(response => response.json())
             .then(data => handleAggregationResponse(data));
     }
 
-    let queryInterval = setInterval(fetchData, 1000);
+    function fetchMetadataFor(slug) {
+        fetch(window.location.origin + '/obs/api/aggregate_slugs/' + slug)
+        .then((r) => {
+            r.json().then((js) => {
+                console.log(js);
+                let tags = js.tags.split(/\s+/);
+                fetchData(tags, js.min_date, js.max_date);
+        })});
+    }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const tags = urlParams.getAll('tag');
-    console.log(tags);
+    {# entry point. #}
+    {# 1. get the slug from request and fetch tags / min and max date for that slug via fetchMetadataFor(slug) #}
+    {# 2. get all data for the metainformation via fetchData(tags, minDate, maxDate)  #}
+    {# 3. format the response in a chartJs friendly way via handleAggregationResponse(response) #}
+    {# 4. re-render the chart. Happens on every invocation, which might not be optimal, but is OK for now #}
+    function update() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const slug = urlParams.get('slug');
+        fetchMetadataFor(slug);
+    }
+
+    {# continuously poll for update on tags and recreate chart as needed #}
+    let queryInterval = setInterval(update, 1000);
+
+
 
 
 </script>

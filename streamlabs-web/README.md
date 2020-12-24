@@ -1,5 +1,13 @@
 # Streamlabs web
 
+## TODO:
+- make slugs configurable
+    - what is the slug name
+    - which tags to show
+    - chart color
+    - date-time from (e.g. only last 30 minutes)
+
+- 
 
 ## environment
 
