@@ -102,7 +102,7 @@
     }
 
     function fetchData(tags, minDate, maxDate) {
-        let url = new URL(window.location.origin + '/obs/api/aggregate');
+        let url = new URL(window.location.origin + '/api/obs/aggregate');
         tags.forEach(tag => url.searchParams.append("tag", tag));
         url.searchParams.append("min_date", minDate);
         url.searchParams.append("max_date", maxDate);
@@ -113,7 +113,7 @@
     }
 
     function fetchMetadataFor(slug) {
-        fetch(window.location.origin + '/obs/api/aggregate_slugs/' + slug)
+        fetch(window.location.origin + '/api/obs/aggregate_slugs/' + slug)
         .then((r) => {
             r.json().then((js) => {
                 console.log(js);
