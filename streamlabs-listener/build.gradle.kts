@@ -18,6 +18,7 @@ dependencies {
     implementation("io.socket:socket.io-client:1.0.0")
     implementation("org.postgresql:postgresql:42.2.16")
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.1")
+    implementation("com.fazecast", "jSerialComm", "[2.0.0,3.0.0)")
 
     implementation("org.xerial:sqlite-jdbc:3.32.3.2")
 
