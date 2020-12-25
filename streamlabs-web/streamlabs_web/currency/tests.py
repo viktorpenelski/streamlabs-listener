@@ -6,6 +6,11 @@ from .service import EURCurrencyConversion
 
 class TestConversion(TestCase):
 
+    def test_eur_returns_same_amount(self):
+        stub = StubCache()
+        service = EURCurrencyConversion(csv_as_lines=stub)
+        self.assertEqual(42.42, service.to_eur(42.42, "EUR"))
+
     def test_lowercase_currency(self):
         stub = StubCache()
         service = EURCurrencyConversion(csv_as_lines=stub)

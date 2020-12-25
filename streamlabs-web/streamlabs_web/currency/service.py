@@ -21,6 +21,8 @@ class EURCurrencyConversion:
         return dict(zip(currencies, rates))
 
     def to_eur(self, amount, from_currency):
+        if from_currency.upper() == "EUR":
+            return amount
         multiplier = self._eur_dict[from_currency.upper()]
         if not multiplier:
             raise Exception(f"did not find {from_currency} in currency dict!")
@@ -30,3 +32,4 @@ class EURCurrencyConversion:
 x = EURCurrencyConversion(CSVasLines())
 print(x.to_eur(1, "USD"))
 print(x.to_eur(1, "BGN"))
+print(x.to_eur(1, "EUR"))
