@@ -11,8 +11,9 @@ import org.junit.jupiter.api.Test
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.io.File
 import java.sql.DriverManager
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Testcontainers
@@ -45,12 +46,19 @@ internal class DonationRepositoryPostgreSQLTest {
             15.5,
             "BGN",
             "digggi",
-            "Some big important message"
+            "Some big important message",
+            date_created = LocalDateTime.now()
         )
         repo.save(donation)
         val actual = repo.getById(1)
         Assertions.assertNotNull(actual)
-        Assertions.assertEquals(donation.copy(id = 1), actual)
+
+        // compare date_created separately as it loses some precision
+        Assertions.assertEquals(donation.copy(id = 1, date_created = actual!!.date_created), actual)
+        Assertions.assertEquals(
+            donation.date_created.truncatedTo(ChronoUnit.MILLIS),
+            actual.date_created.truncatedTo(ChronoUnit.MILLIS)
+        )
     }
 
     @Test
@@ -61,7 +69,8 @@ internal class DonationRepositoryPostgreSQLTest {
             15.5,
             "BGN",
             "digggi",
-            "Some big important message"
+            "Some big important message",
+            date_created = LocalDateTime.now()
         )
         repo.save(donation)
         repo.save(donation.copy(_id = "some external id 2"))

@@ -4,6 +4,7 @@ import com.github.viktorpenelski.Donation
 import com.github.viktorpenelski.DonationRepository
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.Timestamp
 import java.util.*
 
 const val donationsTableName = "DONATIONS"
@@ -23,7 +24,7 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
         config.getConnection().use { conn ->
             conn.prepareStatement(
                 """
-                    SELECT _id, amount, currency, sender, message, id, tag
+                    SELECT _id, amount, currency, sender, message, id, tag, date_created
                     FROM $donationsTableName
                     WHERE id = ?
             """.trimIndent()
@@ -38,7 +39,8 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
                         rs.getString("sender"),
                         rs.getString("message"),
                         rs.getLong("id"),
-                        rs.getString("tag")
+                        rs.getString("tag"),
+                        rs.getTimestamp("date_created").toLocalDateTime()
                     )
                 } else {
                     null
@@ -51,8 +53,8 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
         config.getConnection().use { conn ->
             conn.prepareStatement(
                 """
-                INSERT INTO $donationsTableName(_id, amount, currency, sender, message, tag)
-                    VALUES (?,?,?,?,?,?)
+                INSERT INTO $donationsTableName(_id, amount, currency, sender, message, tag, date_created)
+                    VALUES (?,?,?,?,?,?,?)
             """.trimIndent()
             ).use { preparedStatement ->
                 preparedStatement.setString(1, donation._id)
@@ -61,6 +63,7 @@ class DonationRepositoryJdbc(private val config: JdbcConfig) : DonationRepositor
                 preparedStatement.setString(4, donation.sender)
                 preparedStatement.setString(5, donation.message)
                 preparedStatement.setString(6, donation.tag)
+                preparedStatement.setTimestamp(7, Timestamp.valueOf(donation.date_created))
 
                 preparedStatement.execute()
             }

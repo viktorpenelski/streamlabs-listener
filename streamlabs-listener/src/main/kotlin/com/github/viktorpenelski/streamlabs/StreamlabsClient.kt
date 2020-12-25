@@ -10,6 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 data class StreamlabsConfig(val key: String = System.getenv("STREAMLABS_SOCKET_KEY"))
 
@@ -84,7 +85,8 @@ data class DonationMessage(
             this.currency,
             this.from, //TODO check if this is the sender
             this.message,
-            tag = tag
+            tag = tag,
+            date_created = LocalDateTime.now()
         )
     }
 

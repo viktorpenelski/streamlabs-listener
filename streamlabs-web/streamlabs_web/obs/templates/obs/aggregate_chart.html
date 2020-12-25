@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Aggregated tags</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'obs/style.css' %}">
+    <script src="{% static 'obs/lib/Chart-2.9.4.min.js' %}"></script>
+    <script src="{% static 'obs/chart_config.js' %}"></script>
+    <script src="{% static 'obs/client.js' %}"></script>
+</head>
+<body>
+<div class="chart-container" style="position: relative; height:400px; width:800px">
+    <canvas id="chart"></canvas>
+</div>
+
+</body>
+<script>
+
+    {# entry point. #}
+    {# 1. get the slug from request and fetch tags / min and max date for that slug via fetchMetadataFor(slug) #}
+    {# 2. get all data for the metainformation via fetchData(tags, minDate, maxDate)  #}
+    {# 3. format the response in a chartJs friendly way via handleAggregationResponse(response) #}
+    {# 4. re-render the chart. Happens on every invocation, which might not be optimal, but is OK for now #}
+    function update() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const slug = urlParams.get('slug');
+        const chartContext = document.getElementById('chart').getContext('2d');
+        fetchMetadataFor(slug).then((js) => {
+                let tags = js.tags.split(/\s+/);
+                fetchData(tags, js.min_date, js.max_date)
+                    .then(data => drawChartFrom(data, chartContext));
+        });
+    }
+
+    {# continuously poll for update on tags and recreate chart as needed #}
+    let queryInterval = setInterval(update, 1000);
+
+</script>
+</html>
