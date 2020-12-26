@@ -1,5 +1,8 @@
+import os
+
+
 class CSVasLines:
-    def __init__(self, csv_path="eurofxref.csv"):
+    def __init__(self, csv_path=os.getenv('EUR_CSV_PATH')):
         self._csv_path = csv_path
 
     def lines_as_list(self):
@@ -26,10 +29,5 @@ class EURCurrencyConversion:
         multiplier = self._eur_dict[from_currency.upper()]
         if not multiplier:
             raise Exception(f"did not find {from_currency} in currency dict!")
-        return amount * multiplier
+        return round(amount / multiplier, 4)
 
-
-x = EURCurrencyConversion(CSVasLines())
-print(x.to_eur(1, "USD"))
-print(x.to_eur(1, "BGN"))
-print(x.to_eur(1, "EUR"))

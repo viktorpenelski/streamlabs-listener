@@ -6,6 +6,9 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from .models import Donation
+from currency.service import EURCurrencyConversion, CSVasLines
+
+currency_converter = EURCurrencyConversion(CSVasLines())
 
 
 def index(request):
@@ -37,8 +40,15 @@ def aggregate_for(tag, min_date=None, max_date=None):
         tagged_donations = tagged_donations.filter(date_created__gte=min_date)
     if max_date:
         tagged_donations = tagged_donations.filter(date_created__lte=max_date)
-    aggregated = sum(d.amount for d in tagged_donations)
+    aggregated = sum(_converted_to_eur_or_0(d) for d in tagged_donations)
     return AggregatedDonation(tag, aggregated)
+
+
+def _converted_to_eur_or_0(donation):
+    try:
+        return currency_converter.to_eur(donation.amount, donation.currency)
+    except Exception:
+        return 0
 
 
 class AggregatedDonationEncoder(json.JSONEncoder):
