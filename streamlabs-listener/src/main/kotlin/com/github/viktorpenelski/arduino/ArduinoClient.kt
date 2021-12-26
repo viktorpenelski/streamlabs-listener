@@ -24,7 +24,7 @@ fun main() {
 
     val a = Arduino()
     Thread.sleep(1000)
-    a.send(RGBAnimations.COLOR_WIPE_RED)
+    a.send(RGBAnimations.RAINBOW_CYCLE)
     Thread.sleep(10000)
     println(a)
 }

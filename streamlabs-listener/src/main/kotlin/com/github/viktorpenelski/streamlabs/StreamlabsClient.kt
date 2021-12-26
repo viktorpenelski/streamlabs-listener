@@ -76,9 +76,11 @@ data class DonationMessage(
     val _id: String,
     val message: String,
     val formatted_amount: String
-) {
+): StreamDonation {
 
-    fun toDomain(tag: String?): Donation {
+    override fun message() = this.message
+
+    override fun toDomain(tag: String?): Donation {
         return Donation(
             this._id,
             this.amount,
