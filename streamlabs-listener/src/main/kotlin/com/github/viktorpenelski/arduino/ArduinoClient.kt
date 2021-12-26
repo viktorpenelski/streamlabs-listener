@@ -11,6 +11,8 @@ enum class RGBAnimations(val arduinoCode: Int) {
     RAINBOW_CYCLE(49),
     THEATER_CHASE(50),
     THEATER_RAINBOW_CHASE(51),
+    BOUNCE(52),
+    COLOR_WIPE_RED(53),
 }
 
 internal fun getArduinoComPort() = SerialPort.getCommPorts().firstOrNull {
@@ -21,6 +23,10 @@ internal fun getArduinoComPort() = SerialPort.getCommPorts().firstOrNull {
 fun main() {
 
     val a = Arduino()
+    Thread.sleep(1000)
+    a.send(RGBAnimations.COLOR_WIPE_RED)
+    Thread.sleep(10000)
+    println(a)
 }
 
 class Arduino {

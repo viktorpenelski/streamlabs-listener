@@ -78,7 +78,7 @@ suspend fun controlRGB(arduino: Arduino, channel: ReceiveChannel<DonationMessage
             println("attempting to send")
             arduino.send(RGBAnimations.THEATER_RAINBOW_CHASE)
             launch {
-                delay(2000L)
+                delay(5000L)
                 println("after delay")
                 arduino.send(RGBAnimations.RAINBOW_CYCLE)
             }
