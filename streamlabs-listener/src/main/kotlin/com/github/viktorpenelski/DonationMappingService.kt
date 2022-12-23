@@ -13,7 +13,7 @@ fun processDonation(donationMessage: DonationMessage, repo: DonationRepository) 
 
 fun processTip(tip: StreamDonation, repo: DonationRepository) {
     val tag = getFirstHastTag(tip.message())
-    val donation = tip.toDomain(tag)
+    val donation = tip.toDomain(tag?.toLowerCase())
     repo.save(donation)
     println("saving $donation")
 }
