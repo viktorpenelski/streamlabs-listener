@@ -30,6 +30,10 @@ def aggregate_hashtags(request):
     return render(request, "obs/aggregate.html", context)
 
 
+def time_view(request):
+    context = {}
+    return render(request, "obs/time.html", context)
+
 def aggregate_chart(request):
     return render(request, "obs/aggregate_chart.html")
 

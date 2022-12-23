@@ -4,9 +4,7 @@ import com.github.viktorpenelski.arduino.Arduino
 import com.github.viktorpenelski.arduino.RGBAnimations
 import com.github.viktorpenelski.repo.DonationRepositoryJdbc
 import com.github.viktorpenelski.repo.JdbcConfig
-import com.github.viktorpenelski.streamlabs.DonationMessage
-import com.github.viktorpenelski.streamlabs.StreamlabsClient
-import com.github.viktorpenelski.streamlabs.StreamlabsConfig
+import com.github.viktorpenelski.streamlabs.*
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
 import kotlinx.coroutines.*
@@ -17,8 +15,11 @@ import java.util.*
 
 @ExperimentalCoroutinesApi
 fun main() = runBlocking {
-    val channel = BroadcastChannel<DonationMessage>(9999)
-    val client = StreamlabsClient(channel, StreamlabsConfig())
+//    val channel = BroadcastChannel<DonationMessage>(9999)
+//    val client = StreamlabsClient(channel, StreamlabsConfig())
+
+    val channel = BroadcastChannel<StreamDonation>(9999)
+    val client = StreamElementsClient(channel, StreamElementsConfig())
     val dotenv = initializeDotEnv()
     val donationRepository = DonationRepositoryJdbc(initializeJdbcConfig(dotenv))
     val arduino = Arduino()
@@ -29,7 +30,7 @@ fun main() = runBlocking {
     }
     withContext(Dispatchers.Default) {
         launch {
-            sendDonationsToMapper(channel.openSubscription(), donationRepository, ::processDonation)
+            sendDonationsToMapper(channel.openSubscription(), donationRepository, ::processTip)
         }
         launch {
             controlRGB(arduino, channel.openSubscription())
@@ -53,9 +54,9 @@ fun initializeJdbcConfig(dotenv: Dotenv) =
         })
 
 suspend fun sendDonationsToMapper(
-    channel: ReceiveChannel<DonationMessage>,
+    channel: ReceiveChannel<StreamDonation>,
     repo: DonationRepository,
-    service: (DonationMessage, DonationRepository) -> Unit
+    service: (StreamDonation, DonationRepository) -> Unit
 ) = coroutineScope {
     launch {
         channel.consumeEach {
@@ -64,7 +65,7 @@ suspend fun sendDonationsToMapper(
     }
 }
 
-suspend fun logDonations(channel: ReceiveChannel<DonationMessage>) = coroutineScope {
+suspend fun logDonations(channel: ReceiveChannel<StreamDonation>) = coroutineScope {
     launch {
         channel.consumeEach {
             println(it)
@@ -72,14 +73,15 @@ suspend fun logDonations(channel: ReceiveChannel<DonationMessage>) = coroutineSc
     }
 }
 
-suspend fun controlRGB(arduino: Arduino, channel: ReceiveChannel<DonationMessage>) = coroutineScope {
+suspend fun controlRGB(arduino: Arduino, channel: ReceiveChannel<StreamDonation>) = coroutineScope {
     launch {
         channel.consumeEach {
-            println("attempting to send")
+            println("attempting to send to arduino")
             arduino.send(RGBAnimations.THEATER_RAINBOW_CHASE)
             launch {
-                delay(2000L)
-                println("after delay")
+                val delay = 5000L
+                println("delaying for $delay")
+                delay(delay)
                 arduino.send(RGBAnimations.RAINBOW_CYCLE)
             }
         }
